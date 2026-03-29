@@ -1232,19 +1232,34 @@
             const showManualModal = () => {
                 const manualContent = `
                     <div class="manual-content space-y-4 text-sm">
-                        <p class="italic opacity-80">Welcome to Sales Flow! This manual guides you through the application's features.</p>
-                        <h4>Adding a New Entry</h4>
-                        <ul class="list-disc list-inside space-y-1 ml-4">
-                            <li><strong>Party Name:</strong> The client or party name.</li>
-                            <li><strong>Month & Year:</strong> The target period.</li>
-                            <li><strong>Product:</strong> The specific product.</li>
-                            <li><strong>Target Value:</strong> The target sales value in ₹.</li>
+                        <p class="italic opacity-80">Welcome to Sales Flow! Here is a simple guide to help you use all the features of this app.</p>
+                        
+                        <h4 class="text-base text-[color:var(--primary-color)]">1. Adding a New Target</h4>
+                        <p>Fill in the details in the "Add New Entry" box and click <strong>Add Entry</strong> (or press Enter). The app will remember the Party and Product names you type to give you quick dropdown suggestions next time.</p>
+
+                        <h4 class="text-base text-[color:var(--primary-color)]">2. Summary Dashboard</h4>
+                        <p>This area gives you a quick snapshot of your performance based on the data you are currently viewing. It calculates your Total Target Value, Average Target, Total Entries, and counts your Unique Parties. It also shows a visual bar chart and your Top 5 products.</p>
+
+                        <h4 class="text-base text-[color:var(--primary-color)]">3. Searching and Filtering Data</h4>
+                        <p>Under the "Sales Data" section, you can use the filter boxes to find exactly what you need. The table updates automatically as you type or select:</p>
+                        <ul class="list-disc list-inside space-y-1 ml-4 text-gray-700">
+                            <li><strong>Filter by Party:</strong> Type or select a party and press <strong>Enter</strong>. You can add as many parties as you want at the same time! Click the "x" on the party tag to remove it.</li>
+                            <li><strong>Month & Year:</strong> Quickly jump to a specific time period.</li>
+                            <li><strong>Clear Filters:</strong> Click this to reset your view back to the current month.</li>
                         </ul>
-                        <h4>Managing Data</h4>
-                        <ul class="list-disc list-inside space-y-1 ml-4">
-                            <li><strong>Import/Export CSV:</strong> Includes backwards compatibility for old 4-column files.</li>
-                            <li><strong>Delete Parties/Products:</strong> Remove names and data.</li>
+
+                        <h4 class="text-base text-[color:var(--primary-color)]">4. Editing & Deleting Individual Records</h4>
+                        <p>In the Sales Data table, look at the "Actions" column on the far right. Click the yellow <strong>Pencil icon</strong> to fix a mistake in that row, or the red <strong>Trash Can icon</strong> to delete that specific record forever.</p>
+
+                        <h4 class="text-base text-[color:var(--primary-color)]">5. Managing Bulk Data</h4>
+                        <ul class="list-disc list-inside space-y-1 ml-4 text-gray-700">
+                            <li><strong>Download CSV:</strong> Saves your current table as a spreadsheet file (like Excel) to your computer or phone.</li>
+                            <li><strong>Import CSV:</strong> Upload a spreadsheet file to add many records at once.</li>
+                            <li><strong>Delete Parties/Products:</strong> Completely removes a specific Party or Product from your memory list. <em>Warning: This also deletes all sales records linked to them!</em></li>
                         </ul>
+
+                        <h4 class="text-base text-[color:var(--primary-color)]">6. Starting Fresh</h4>
+                        <p>If you want to completely erase everything in the app and start from scratch, click the <strong>Reset Data</strong> button at the very top of the page.</p>
                     </div>
                 `;
                 showAppModal('User Manual', manualContent, `<button id="close-modal-btn" class="btn btn-secondary">Close</button>`);
