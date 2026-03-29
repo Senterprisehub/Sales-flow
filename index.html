@@ -164,8 +164,10 @@
             animation: fadeIn 0.3s ease-out;
             border: 1px solid var(--border-color);
             max-height: 90vh;
-            overflow-y: auto;
+            overflow-y: hidden; /* Hide main modal scroll, let inner content scroll */
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
         
         .modal-close {
@@ -190,6 +192,13 @@
             border: 1px solid var(--border-color);
             border-radius: 0.5rem;
             padding: 0.5rem;
+        }
+
+        /* Added specific scroll for the manual content */
+        .manual-content {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 0.5rem;
         }
         
         .manual-content h4 {
@@ -494,7 +503,7 @@
         <div class="modal-content">
             <button class="modal-close" id="modal-close-btn">&times;</button>
             <h3 id="modal-title" class="text-lg sm:text-xl font-bold mb-4"></h3>
-            <div id="modal-body"></div>
+            <div id="modal-body" style="flex: 1; overflow-y: hidden; display: flex; flex-direction: column;"></div>
             <div id="modal-footer" class="flex justify-end space-x-2 mt-4"></div>
         </div>
     </div>
@@ -844,7 +853,7 @@
                 if (!entry) return;
                 
                 let bodyContent = `
-                    <div class="space-y-4">
+                    <div class="space-y-4" style="overflow-y: auto; max-height: 60vh; padding-right: 0.5rem;">
                         <div>
                             <label class="block text-sm font-medium mb-1">Party Name</label>
                             <input type="text" id="edit-party" value="${entry.party}" list="parties-list" class="w-full">
