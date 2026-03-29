@@ -7,11 +7,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Custom styles for the single light theme using CSS variables */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
 
         :root {
-            /* Light Theme Variables */
             --bg-color: #f8fafc;
             --text-color: #1e293b;
             --card-bg: #fff;
@@ -306,7 +304,7 @@
                     Manual
                 </button>
                 <h1 class="text-3xl sm:text-4xl font-bold text-[color:var(--text-color)] text-center w-full sm:w-auto">Sales Flow</h1>
-                <p class="mt-1 mb-1 text-sm font-semibold text-[color:var(--secondary-color)]">Developed By S.R Software Studio</p>
+                <p class="mt-1 mb-1 text-sm font-semibold text-[color:var(--secondary-color)]">Developed By Supriyo</p>
                 <button id="dummy-delete-btn" class="btn btn-tertiary px-4 py-2 text-sm w-full sm:w-auto">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -449,7 +447,7 @@
                     <div id="filter-chips" class="filter-chips"></div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-5 gap-4 mb-4">
-                        <input type="text" id="filter-party" placeholder="Filter by Party" list="parties-list" class="text-sm">
+                        <input type="text" id="filter-party" placeholder="Add Party (Press Enter)" list="parties-list" class="text-sm">
                         <select id="filter-month" class="text-sm">
                             <option value="January">January</option>
                             <option value="February">February</option>
@@ -509,6 +507,9 @@
             let filteredSalesData = [];
             let partyNames = new Set();
             let productNames = new Set();
+            
+            // New state structure to hold multiple active party selections
+            let activePartyFilters = new Set();
             let salesChart = null;
             
             const partyInput = document.getElementById('party');
@@ -950,13 +951,17 @@
             };
 
             const filterData = () => {
-                const filterParty = filterPartyInput.value.trim().toLowerCase();
                 const filterMonth = filterMonthInput.value;
                 const filterYear = parseInt(filterYearInput.value);
                 const filterProduct = filterProductInput.value.trim().toLowerCase();
 
                 filteredSalesData = salesData.filter(entry => {
-                    const matchesParty = !filterParty || entry.party.toLowerCase().includes(filterParty);
+                    const partyLower = entry.party.toLowerCase();
+                    
+                    // Match multiple parties using OR logic. If no active filters, pass.
+                    const matchesParty = activePartyFilters.size === 0 || 
+                                         Array.from(activePartyFilters).some(p => partyLower.includes(p.toLowerCase()));
+                                         
                     const matchesMonth = entry.month === filterMonth;
                     const matchesYear = isNaN(filterYear) || entry.year === filterYear;
                     const matchesProduct = !filterProduct || entry.product.toLowerCase().includes(filterProduct);
@@ -971,9 +976,11 @@
             const updateFilterChips = () => {
                 filterChipsContainer.innerHTML = '';
                 
-                if (filterPartyInput.value) {
-                    addFilterChip('Party', filterPartyInput.value, 'party');
-                }
+                // Add chips for all selected party filters
+                activePartyFilters.forEach(party => {
+                    addFilterChip('Party', party, `party:${party}`);
+                });
+
                 if (filterMonthInput.value) {
                     addFilterChip('Month', filterMonthInput.value, 'month');
                 }
@@ -987,7 +994,12 @@
                 document.querySelectorAll('.filter-chip-remove').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const type = e.target.getAttribute('data-type');
-                        if (type === 'party') filterPartyInput.value = '';
+                        
+                        // Handle removal for specific party tag
+                        if (type.startsWith('party:')) {
+                            const partyToRemove = type.substring(6);
+                            activePartyFilters.delete(partyToRemove);
+                        }
                         else if (type === 'month') {
                             const currentMonthIndex = new Date().getMonth();
                             const monthOrder = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -1008,6 +1020,7 @@
             };
 
             const clearFilters = () => {
+                activePartyFilters.clear();
                 filterPartyInput.value = '';
                 filterProductInput.value = '';
                 
@@ -1020,6 +1033,24 @@
                 showMessage('Filters cleared.', 'info');
             };
             
+            // Logic to handle adding multiple party filters via typing/selecting
+            const handleAddPartyFilter = () => {
+                const val = filterPartyInput.value.trim();
+                if (val) {
+                    activePartyFilters.add(val);
+                    filterPartyInput.value = ''; // clear input for next tag
+                    filterData();
+                }
+            };
+            
+            filterPartyInput.addEventListener('change', handleAddPartyFilter);
+            filterPartyInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleAddPartyFilter();
+                }
+            });
+
             const downloadCsv = () => {
                 if (filteredSalesData.length === 0) {
                     showMessage('No data to download.', 'error');
@@ -1221,7 +1252,6 @@
             };
             
             addBtn.addEventListener('click', addEntry);
-            filterPartyInput.addEventListener('input', filterData);
             filterMonthInput.addEventListener('change', filterData);
             filterYearInput.addEventListener('input', filterData);
             filterProductInput.addEventListener('input', filterData);
@@ -1241,6 +1271,7 @@
             
             [partyInput, monthInput, yearInput, productInput, targetValueInput].forEach(input => {
                 input.addEventListener('keypress', (e) => {
+                    // Only trigger addEntry on enter for the actual form inputs, not filters
                     if (e.key === 'Enter') addEntry();
                 });
             });
