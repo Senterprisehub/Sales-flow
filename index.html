@@ -301,7 +301,8 @@
                             <datalist id="products-list"></datalist>
                         </div>
                         <div>
-                            <input type="number" id="target-value" placeholder="Target Value (in ₹)" step="0.01" min="0">
+                            <!-- Removed min="0" to allow zero and negative values -->
+                            <input type="number" id="target-value" placeholder="Target Value (in ₹)" step="0.01">
                         </div>
                         <div>
                             <input type="number" id="achievement-value" placeholder="Achievement Value (in ₹)" step="0.01" min="0" value="0">
@@ -788,7 +789,8 @@
                 const achievementValue = parseFloat(achievementValueInput.value) || 0;
                 const notes = notesInput.value.trim();
 
-                if (!party || !date || !product || isNaN(targetValue) || targetValue <= 0) {
+                // Allow zero and negative values — only reject if not a valid number
+                if (!party || !date || !product || isNaN(targetValue)) {
                     showMessage('Please fill out all required fields with valid data.', 'error');
                     return;
                 }
@@ -827,7 +829,7 @@
                         <div><label class="block text-sm font-medium mb-1">Party Name</label><input type="text" id="edit-party" value="${entry.party.replace(/"/g, '&quot;')}" list="parties-list" class="w-full"></div>
                         <div><label class="block text-sm font-medium mb-1">Date</label><input type="date" id="edit-date" value="${entry.date || ''}" class="w-full"></div>
                         <div><label class="block text-sm font-medium mb-1">Product</label><input type="text" id="edit-product" value="${entry.product.replace(/"/g, '&quot;')}" list="products-list" class="w-full"></div>
-                        <div><label class="block text-sm font-medium mb-1">Target Value (₹)</label><input type="number" id="edit-target-value" value="${entry.targetValue}" step="0.01" min="0" class="w-full"></div>
+                        <div><label class="block text-sm font-medium mb-1">Target Value (₹)</label><input type="number" id="edit-target-value" value="${entry.targetValue}" step="0.01" class="w-full"></div>
                         <div><label class="block text-sm font-medium mb-1">Achievement Value (₹)</label><input type="number" id="edit-achievement-value" value="${entry.achievementValue}" step="0.01" min="0" class="w-full"></div>
                         <div><label class="block text-sm font-medium mb-1">Notes</label><input type="text" id="edit-notes" value="${(entry.notes || '').replace(/"/g, '&quot;')}" class="w-full"></div>
                     </div>`;
@@ -848,7 +850,8 @@
                     const a = parseFloat(document.getElementById('edit-achievement-value').value) || 0;
                     const n = document.getElementById('edit-notes').value.trim();
 
-                    if (!p || !d || !pr || isNaN(t) || t <= 0) {
+                    // Allow zero and negative values — only reject if not a valid number
+                    if (!p || !d || !pr || isNaN(t)) {
                         showMessage('Please fill out all fields with valid data.', 'error');
                         return;
                     }
@@ -1034,7 +1037,8 @@
                                 const achievementValue = columns.length >= 5 ? parseFloat(columns[4].replace(
                                     /^"|"$/g, '')) || 0 : 0;
                                 const notes = columns.length >= 6 ? columns[5].replace(/^"|"$/g, '') : '';
-                                if (party && date && product && !isNaN(targetValue) && targetValue > 0) {
+                                // Allow zero and negative values — only reject if not a valid number
+                                if (party && date && product && !isNaN(targetValue)) {
                                     importedData.push({
                                         id: crypto.randomUUID(),
                                         party,
